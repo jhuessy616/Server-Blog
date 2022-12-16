@@ -16,6 +16,8 @@ app.use(express.static(`${__dirname}/public`));
 // !TODO this might change. different controller
 //  any traffic coming in that has practice in the URL will go to the practice controller for more routing options. 
 app.use("/routes", routesController);
+// for Rob's way
+app.use("/rob", require("./controllers/rob"));
 console.log(__dirname);
 
 // boiler plate for starting server

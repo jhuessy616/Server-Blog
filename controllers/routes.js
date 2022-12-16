@@ -1,5 +1,3 @@
-// !TODO THIS COULD CHANGE DEPENDING ON WHAT WE ARE USING FOR A CONTROLLER. SET UP MONDAY PREPARE TO CHANGE.
-
 // router variable imports the Router Engine from Express
 const router = require("express").Router();
 const db = require("../api/blog.json");
@@ -9,7 +7,6 @@ const dbPath = "./api/blog.json";
 // ! ALL POSTS
 // Create endpoint that will show all posts
 router.get("/", (req, res) => {
-  console.log(db);
   try {
     res.status(200).json({
       db,
@@ -21,15 +18,11 @@ router.get("/", (req, res) => {
   }
 });
 
-//  create api endpoint
-// TODO will have to change what this is
-// TODO Also need to check if it's a get or post, etc.
 // ! ONE POST BY ID
 router.get("/:id", (req, res) => {
   try {
     let { id } = req.params;
     let result = db.filter((i) => i.post_id == id);
-    // req = request & res = response
     res.status(200).json({
       status: `Found item at id: ${id}`,
       result,
@@ -45,7 +38,6 @@ router.get("/:id", (req, res) => {
 router.post("/", (req, res) => {
   try {
     const blogItem = req.body;
-    // console.log(blogItem)
     fs.readFile(dbPath, (err, data) => {
       if (err) throw err;
       const db = JSON.parse(data);
@@ -62,32 +54,69 @@ router.post("/", (req, res) => {
     });
   }
 });
-// ! Update a route
-router.patch("/", (req, res) => {
+// ! Update a route using query to grab. Directions say grab from query
+router.put("/", (req, res) => {
   try {
     const id = req.query.id;
+    const blogPost= req.body
+    let result;
     fs.readFile(dbPath, (err, data) => {
       if (err) throw err;
       const db = JSON.parse(data);
-      db.forEach((item, index, array) => {
-        if (item.post_id == id) {
-          array[index] = req.body
+   db.forEach((element, index) => {
+        if (element.post_id == id) {
+          db[index] = blogPost;
+          result = blogPost;
+          fs.writeFile(dbPath, JSON.stringify(db), (err) => console.log(err));
         }
-      })
-      
-      fs.writeFile(dbPath, JSON.stringify(db), () => null);
-    });
-      res.status(201).json({
-        status: "item updated",
-        updatedPost: req.body
+      });
+
+      result
+        ? res.status(200).json({
+            status: `ID: ${id} succesfully modified`,
+            object: result,
+          })
+        : res.status(404).json({
+            status: `ID: ${id} not found`,
+          });
     });
   } catch (err) {
+    console.log(err);
     res.status(500).json({
-      error: `${err}`,
+      status: `Error: ${err}`,
     });
   }
 });
 
 // ! Delete an item
+
+router.delete("/:id", (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    fs.readFile(dbPath, (err, data) => {
+      if (err) throw err;
+      const db = JSON.parse(data);
+      const filteredDb = db.filter((element) => {
+        if (element.post_id !== id) {
+          return element;
+        }
+      });
+
+      fs.writeFile(dbPath, JSON.stringify(filteredDb), (err) =>
+        console.log(err)
+      );
+
+      res.status(200).json({
+        status: `ID: ${id} successfully deleted`,
+        filteredDb,
+      });
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      status: `Error: ${err}`,
+    });
+  }
+});
 
 module.exports = router;
