@@ -68,8 +68,8 @@ router.post("/add", (req, res) => {
 // Use put to update
 router.put("/:id", (req, res) => {
   try {
-    //  setting constant id to the query id
-    const id = req.query.id;
+    //  setting constant id to the params id
+    const id = req.params.id;
     // the constant blogPost is set to the request body (in postman)
     const blogPost = req.body;
     // declaring result out here so we can later access it
