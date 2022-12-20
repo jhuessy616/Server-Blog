@@ -5,7 +5,6 @@ const router = require("express").Router();
 const db = require("../api/blog.json");
 // fs needed for functionality
 const fs = require("fs");
-const { devNull } = require("os");
 // the path we will take to access our "database"
 const dbPath = "./api/blog.json";
 
@@ -15,11 +14,11 @@ const dbPath = "./api/blog.json";
 // use a get for this
 router.get("/", (req, res) => {
   try {
-    // if succesful will resolve and show the entire database of blogposts.
+    // if succesful will respond and show the entire database of blogposts.
     res.status(200).json({
       db,
     });
-    // otherwise will catch the error and allert the client of the erroe
+    // otherwise will catch the error and alert the client of the erroe
   } catch (err) {
     res.status(500).json({
       status: `Error: ${err}`,
@@ -69,7 +68,7 @@ router.post("/", (req, res) => {
       // The JSON.stringify() method converts a JavaScript value to a JSON string,
       fs.writeFile(dbPath, JSON.stringify(db), () => null);
     });
-    // If succesfull will receive the statuse and see the new blog item.
+    // If succesfull will respond the status and see the new blog item.
     res.status(201).json({
       status: "New item created",
       blogItem,
