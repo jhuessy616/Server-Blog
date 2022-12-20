@@ -132,11 +132,12 @@ router.delete("/delete/:id", (req, res) => {
 });
 
 // !Functions to read and write the file --------------------------------
-
+// function that reads file and parses the json data
 function read() {
   const file = fs.readFileSync(dbPath);
   return JSON.parse(file);
 }
+// function that writes/saves data and stringifys it. 
 function save(data) {
   fs.writeFileSync(dbPath, JSON.stringify(data), (err) => {
     if (err) {
